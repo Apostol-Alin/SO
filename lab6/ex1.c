@@ -12,7 +12,7 @@ void * reverse(void* v){
 	int i = 0;
 	while(arg[i])
 		i++;
-	rev = malloc(i);
+	rev = malloc(i); // alocam dinamic memoria
 	int j = 0;
 	while(j <=i){
 		rev[j] = arg[i - j - 1];
@@ -28,12 +28,13 @@ int main(int argc, char* argv[]){
 		return errno;
 	}
 	void* result;
+	//facem un void* in care retinem ce returneaza functia
 	if(pthread_join(thread, &result)){
 		perror(NULL);
 		return errno;
 	}
-	printf("%s\n", (char *) result);
-	free(result);
+	printf("%s\n", (char *) result); // ii dam cast la char *
+	free(result); // eliberam memoria
 
 	return 0;
 }
