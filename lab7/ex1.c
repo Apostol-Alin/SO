@@ -13,14 +13,18 @@ pthread_mutex_t lock;
 
 int decrease_count(int count){
 	pthread_mutex_lock(&lock);
+	// blocam mutex-ul pentru a fi singurii cu acces la count
 	if(available_resources < count){
+		// daca nu am de unde sa scad, deblochez mutex-ul si semnalez cu -1
 		pthread_mutex_unlock(&lock);
 		return -1;
 	}
 	else
 		available_resources -= count;
+	// altfel imi continui operatiile
 	printf("Got %d resources %d remaining \n", count, available_resources);
 	pthread_mutex_unlock(&lock);
+	// eliberez mutex-ul
 	return 0;
 }
 
@@ -34,8 +38,12 @@ int increase_count(int count){
 
 void* f(void* v){
 	int* val = (int * ) v;
-	while(decrease_count(*val));
-	int rez = increase_count(*val);
+	// aici incepe zona critica
+	while(decrease_count(*val)); // trhead-ul incearca
+	// sa faca decrease count corect (adica sa aiba resurse din care sa ia)
+
+	int rez = increase_count(*val); // apoi semnaleaza ca a eliberat o resursa
+	// aici se termina zona critica
 	free(val);
 	return NULL;
 }
@@ -46,6 +54,7 @@ int main(){
 		perror(NULL);
 		return errno;
 	}
+	// initializam mutex-ul
 	for(int i = 1; i <= 5; i++){
 		int* value = (int *) malloc(sizeof(int));
 		*value = i;
@@ -61,5 +70,6 @@ int main(){
 		}
 	}
 	pthread_mutex_destroy(&lock);
+	// eliberam mutex-ul
 	return 0;
 }

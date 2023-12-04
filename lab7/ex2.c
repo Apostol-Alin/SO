@@ -14,6 +14,10 @@ sem_t sem;
 void init_barrier(int x){
 	pthread_mutex_init(&lock, NULL);
 	sem_init(&sem, 0, 0);
+	// initializam semaforul cu 0
+	// astfel fortam toate thread-urile sa se puna la coada si sa astepte
+	// sa ajunga si "ultimul" thread la bariera
+	// sa se poata elibera toate
 	value = 0;
 	n = x;
 }
@@ -21,9 +25,13 @@ void init_barrier(int x){
 void barrier_point(){
 	pthread_mutex_lock(&lock);
 	value += 1;
+	// cand un thread ajunge la bariera
+	// marcheaza acest lucru si se verifica daca este ultimul asteptat
 	if(value == n){
 		for(int i = 0; i < n; i++)
 			sem_post(&sem);
+		// in acest caz sem_post incrementeaza semaforul cu 1
+		// si marcheaza ca se poate elibera un thread care astepta la coada
 	}
 	pthread_mutex_unlock(&lock);
 	sem_wait(&sem);
