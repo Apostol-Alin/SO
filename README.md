@@ -1,0 +1,1 @@
+My final project, titled "SleepingBarbers," centers around solving the generalized Sleeping Barbers problem with n Barbers and m Charis, focusing on Inter-Process Communication and Synchronization techniques utilizing a Monitor.
